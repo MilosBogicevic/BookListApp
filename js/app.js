@@ -25,7 +25,7 @@ class UI {
         books.forEach((book) => UI.addBook(book));
     }
 
-    static addBook() {
+    static addBook(book) {
         const list = document.querySelector("#book-list");
         const row = document.createElement("tr");
         
@@ -36,6 +36,17 @@ class UI {
         <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>`;
         
         list.appendChild(row);
+    }
+
+    static deleteBook(el){
+        if(el.classList.contains("delete")){
+            el.parentElement.parentElement.remove();
+        }
+    }
+    static clearInput(){
+        document.querySelector("#title").value = "";
+        document.querySelector("#author").value = "";
+        document.querySelector("#isbn").value = "";
     }
 }
 
@@ -50,8 +61,17 @@ document.querySelector("#book-form").addEventListener("submit", (e) => {
     const author = document.querySelector("#author").value;
     const isbn = document.querySelector("#isbn").value;
 
-    //Instatiate book
+    // Instatiate book
     const book = new Book(title, author, isbn);
 
-    console.log(book)
+    // Add Book
+    UI.addBook(book);
+
+    // Clear input after submit
+    UI.clearInput();
 });
+
+    // Delete button
+    document.querySelector("#book-list").addEventListener("click", (e) => {
+        UI.deleteBook(e.target)
+    });
