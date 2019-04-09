@@ -8,19 +8,7 @@ class Book {
 
 class UI {
     static displayBooks(){
-        const StoredBooks = [
-            {
-                title: "Book 1",
-                author: "Author 1",
-                isbn: "123"
-            },
-            {
-                title: "Book 2",
-                author: "Author 2",
-                isbn: "345"
-            }
-        ];
-        const books = StoredBooks;
+        const books = Store.getBooks();
 
         books.forEach((book) => UI.addBook(book));
     }
@@ -51,13 +39,42 @@ class UI {
         const container = document.querySelector(".container");
         const form = document.querySelector('#book-form');
         container.insertBefore(div,form);
-        setTimeout(() => document.querySelector(".alert").remove(), 1500);
+        setTimeout(() => document.querySelector(".alert").remove(), 2000);
     }
 
     static clearInput(){
         document.querySelector("#title").value = "";
         document.querySelector("#author").value = "";
         document.querySelector("#isbn").value = "";
+    }
+}
+
+// Local storage: Keep data on reload.
+class Store {
+    static getBooks(){
+        let books;
+        if(localStorage.getItem("books") === null){
+            books = [];
+        } else{
+            books = JSON.parse(localStorage.getItem("books"));
+        }
+        return books;
+    }
+
+    static addBook(book){
+        const books = Store.getBooks();
+        books.push(book);
+        localStorage.setItem("books", JSON.stringify(books));
+    }
+
+    static removeBook(isbn){
+        const books = Store.getBooks();
+        books.forEach((book, index) => {
+            if(book.isbn === isbn) {
+                books.splice(index,1);
+            }
+        });
+        localStorage.setItem("books", JSON.stringify(books));
     }
 }
 
@@ -86,13 +103,27 @@ document.querySelector("#book-form").addEventListener("submit", (e) => {
     // Add Book
     UI.addBook(book);
 
+    // Add Book to local storage
+    Store.addBook(book);
+
     // Clear input after submit
     UI.clearInput();
 
+    // Alert: Success
+    UI.showAlert("Book is added.", "success");
     }
 });
 
-    // Delete button
+    // Delete a book
     document.querySelector("#book-list").addEventListener("click", (e) => {
+
+        //Delete a book from User Interface
         UI.deleteBook(e.target)
+
+        //Delete from local storage
+        Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
+
+    // Alert: Book removed
+    UI.showAlert("Book is deleted.", "primary");
     });
