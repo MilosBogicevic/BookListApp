@@ -1,5 +1,5 @@
 # BookListApp
-JavaScript Book List App
+JavaScript Book List App with local storage
 
 
 I did this exercise after I looked through the Youtube tutorial.
